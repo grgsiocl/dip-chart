@@ -150,7 +150,7 @@ table.dip-tbl tr.hl td.vc{color:#fff;font-weight:bold;}
 <div class="disclaimer">
   <div class="disclaimer-inner">
     <span class="disc-icon">&#9432;</span>
-    <span>This tool is developed for <strong>HSD informational purposes only</strong>. Dip chart values are based on IS: 2166-1963 calibration standards. Users are advised to verify readings against official calibration certificates before any commercial or operational use. Any use of this tool, in whole or in part, must carry due credit to <strong>Kishore Kumar Maestri</strong>.</span>
+    <span>This tool is developed for <strong>informational purposes only</strong>. Dip chart values are based on IS: 2166-1963 calibration standards. Users are advised to verify readings against official calibration certificates before any commercial or operational use. Any use of this tool, in whole or in part, must carry due credit to <strong>Kishore Kumar Maistry</strong>.</span>
   </div>
 </div>
 </div>
@@ -408,7 +408,7 @@ function downloadPDF() {
       doc.setTextColor(110, 127, 168);
       doc.setFont('helvetica', 'normal');
       var today = new Date().toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' });
-      doc.text('HSD Informational Use Only   IS: 2166-1963   ' + today + '   Developed by: Kishore Kumar Maestry', ml, ph - 6);
+      doc.text('Informational Use Only   IS: 2166-1963   ' + today + '   Developed by: Kishore Kumar Maistry', ml, ph - 6);
       newPage();
       rowY = 14;
       drawHdr(rowY);
@@ -448,7 +448,7 @@ function downloadPDF() {
   doc.setTextColor(110, 127, 168);
   doc.setFont('helvetica', 'normal');
   var today2 = new Date().toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' });
-  doc.text('HSD Informational Use Only   IS: 2166-1963   ' + today2 + '   Developed by: Kishore Kumar Maistry', ml, ph - 6);
+  doc.text('Informational Use Only   IS: 2166-1963   ' + today2 + '   Developed by: Kishore Kumar Maistry', ml, ph - 6);
 
   doc.save(curTank + 'KL_Dip_Chart.pdf');
 }
