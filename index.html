@@ -723,75 +723,6 @@ function downloadPDF() {
     doc.text(boxes[bi][1], bx + bw / 2, infoY + 9.5, { align:'center' });
   }
 
-  /* Table */
-  var colW  = usableW / 12;
-  var rowH  = 5.0;
-  var hdrs  = ['DIP','VOLUME','DIFF','DIP','VOLUME','DIFF','DIP','VOLUME','DIFF','DIP','VOLUME','DIFF'];
-  var tblY  = infoY + 15;
-  var q     = Math.ceil(maxDip / 4);
-
-  function drawHdr(y) {
-    doc.setFillColor.apply(doc, C.tblHdrBg);
-    doc.setDrawColor.apply(doc, C.lineColor);
-    doc.setLineWidth(0.2);
-    doc.rect(ml, y, usableW, 7, 'FD');
-    doc.setFont('helvetica', 'bold'); doc.setFontSize(6.5);
-    for (var hi = 0; hi < 12; hi++) {
-      doc.setTextColor.apply(doc, C.tblHdrText);
-      doc.text(hdrs[hi], ml + (hi + 0.5) * colW, y + 4.8, { align:'center' });
-    }
-  }
-
-  drawHdr(tblY);
-  var rowY = tblY + 7;
-  doc.setFont('helvetica', 'normal');
-
-  for (var ri = 1; ri <= q; ri++) {
-    if (rowY + rowH > ph - 16) {
-      /* footer */
-      doc.setDrawColor.apply(doc, C.lineColor);
-      doc.setLineWidth(0.3);
-      doc.line(ml, ph - 10, pw - mr, ph - 10);
-      doc.setFontSize(7); doc.setFont('helvetica', 'normal');
-      doc.setTextColor.apply(doc, C.footerText);
-      var td = new Date().toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'});
-      doc.text('Informational Use Only   IS: 2166-1963   ' + td + '   Developed by: Kishore Kumar Maistry', ml, ph - 6);
-      newPage(); rowY = 14; drawHdr(rowY); rowY += 7;
-    }
-
-    var even = (ri % 2 === 0);
-    if (even) { doc.setFillColor.apply(doc, C.tblRowAlt); }
-    else       { doc.setFillColor.apply(doc, C.pageBg); }
-    doc.setDrawColor.apply(doc, C.lineColor);
-    doc.setLineWidth(0.15);
-    doc.rect(ml, rowY, usableW, rowH, 'FD');
-
-    for (var ci = 0; ci < 4; ci++) {
-      var d = ri + ci * q;
-      if (d <= maxDip && arr[d] > 0) {
-        var v    = arr[d];
-        var diff = d > 1 ? (v - arr[d-1]).toFixed(2) : '-';
-        var vStr = v.toLocaleString('en-IN',{minimumFractionDigits:2,maximumFractionDigits:2});
-        var ty   = rowY + rowH - 1.3;
-        var cx   = ci * 3;
-        doc.setFontSize(7);
-        doc.setTextColor.apply(doc, C.dipCol); doc.text(String(d), ml + (cx + 0.5) * colW, ty, { align:'center' });
-        doc.setTextColor.apply(doc, C.volCol); doc.text(vStr,      ml + (cx + 1.5) * colW, ty, { align:'center' });
-        doc.setTextColor.apply(doc, C.diffCol); doc.text(diff,     ml + (cx + 2.5) * colW, ty, { align:'center' });
-      }
-    }
-    rowY += rowH;
-  }
-
-  /* Final footer */
-  doc.setDrawColor.apply(doc, C.lineColor);
-  doc.setLineWidth(0.3);
-  doc.line(ml, ph - 10, pw - mr, ph - 10);
-  doc.setFontSize(7); doc.setFont('helvetica', 'normal');
-  doc.setTextColor.apply(doc, C.footerText);
-  var td2 = new Date().toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'});
-  doc.text('Informational Use Only   IS: 2166-1963   ' + td2 + '   Developed by: Kishore Kumar Maistry', ml, ph - 6);
-
   /* ---- Interpolation Guide: add as final page ---- */
   doc.addPage();
   doc.setFillColor.apply(doc, C.pageBg);
@@ -923,7 +854,95 @@ function downloadPDF() {
   var td3 = new Date().toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'});
   doc.text('Informational Use Only   IS: 2166-1963   ' + td3 + '   Developed by: Kishore Kumar Maistry', ml, ph - 6);
 
-  doc.save(curTank + 'KL_Dip_Chart.pdf');
+
+
+  /* New page for chart */
+  newPage();
+
+  /* Re-draw header band on chart page */
+  doc.setFillColor.apply(doc, C.headerBg);
+  doc.rect(0, 0, pw, 28, 'F');
+  doc.setFillColor.apply(doc, C.accentBlue);
+  doc.rect(0, 28, pw, 1.2, 'F');
+  doc.setFont('helvetica', 'bold');
+  doc.setFontSize(13);
+  doc.setTextColor.apply(doc, C.headerText);
+  doc.text(curTank + ' KL — CALIBRATION CHART', pw / 2, 12, { align:'center' });
+  doc.setFontSize(8);
+  doc.setTextColor(180, 210, 255);
+  doc.text('DIP in cm     VOLUME in Litres     DIFF in L/cm     IS: 2166-1963', pw / 2, 21, { align:'center' });
+
+  /* Reinit table Y for new page */
+  /* Table */
+  var colW  = usableW / 12;
+  var rowH  = 5.0;
+  var hdrs  = ['DIP','VOLUME','DIFF','DIP','VOLUME','DIFF','DIP','VOLUME','DIFF','DIP','VOLUME','DIFF'];
+  var tblY  = 33;  /* starts on new page after guide */
+  var q     = Math.ceil(maxDip / 4);
+
+  function drawHdr(y) {
+    doc.setFillColor.apply(doc, C.tblHdrBg);
+    doc.setDrawColor.apply(doc, C.lineColor);
+    doc.setLineWidth(0.2);
+    doc.rect(ml, y, usableW, 7, 'FD');
+    doc.setFont('helvetica', 'bold'); doc.setFontSize(6.5);
+    for (var hi = 0; hi < 12; hi++) {
+      doc.setTextColor.apply(doc, C.tblHdrText);
+      doc.text(hdrs[hi], ml + (hi + 0.5) * colW, y + 4.8, { align:'center' });
+    }
+  }
+
+  drawHdr(tblY);
+  var rowY = tblY + 7;
+  doc.setFont('helvetica', 'normal');
+
+  for (var ri = 1; ri <= q; ri++) {
+    if (rowY + rowH > ph - 16) {
+      /* footer */
+      doc.setDrawColor.apply(doc, C.lineColor);
+      doc.setLineWidth(0.3);
+      doc.line(ml, ph - 10, pw - mr, ph - 10);
+      doc.setFontSize(7); doc.setFont('helvetica', 'normal');
+      doc.setTextColor.apply(doc, C.footerText);
+      var td = new Date().toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'});
+      doc.text('Informational Use Only   IS: 2166-1963   ' + td + '   Developed by: Kishore Kumar Maistry', ml, ph - 6);
+      newPage(); rowY = 14; drawHdr(rowY); rowY += 7;
+    }
+
+    var even = (ri % 2 === 0);
+    if (even) { doc.setFillColor.apply(doc, C.tblRowAlt); }
+    else       { doc.setFillColor.apply(doc, C.pageBg); }
+    doc.setDrawColor.apply(doc, C.lineColor);
+    doc.setLineWidth(0.15);
+    doc.rect(ml, rowY, usableW, rowH, 'FD');
+
+    for (var ci = 0; ci < 4; ci++) {
+      var d = ri + ci * q;
+      if (d <= maxDip && arr[d] > 0) {
+        var v    = arr[d];
+        var diff = d > 1 ? (v - arr[d-1]).toFixed(2) : '-';
+        var vStr = v.toLocaleString('en-IN',{minimumFractionDigits:2,maximumFractionDigits:2});
+        var ty   = rowY + rowH - 1.3;
+        var cx   = ci * 3;
+        doc.setFontSize(7);
+        doc.setTextColor.apply(doc, C.dipCol); doc.text(String(d), ml + (cx + 0.5) * colW, ty, { align:'center' });
+        doc.setTextColor.apply(doc, C.volCol); doc.text(vStr,      ml + (cx + 1.5) * colW, ty, { align:'center' });
+        doc.setTextColor.apply(doc, C.diffCol); doc.text(diff,     ml + (cx + 2.5) * colW, ty, { align:'center' });
+      }
+    }
+    rowY += rowH;
+  }
+
+  /* Final footer */
+  doc.setDrawColor.apply(doc, C.lineColor);
+  doc.setLineWidth(0.3);
+  doc.line(ml, ph - 10, pw - mr, ph - 10);
+  doc.setFontSize(7); doc.setFont('helvetica', 'normal');
+  doc.setTextColor.apply(doc, C.footerText);
+  var td2 = new Date().toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'});
+  doc.text('Informational Use Only   IS: 2166-1963   ' + td2 + '   Developed by: Kishore Kumar Maistry', ml, ph - 6);
+
+    doc.save(curTank + 'KL_Dip_Chart.pdf');
 }
 
 /* Boot */
