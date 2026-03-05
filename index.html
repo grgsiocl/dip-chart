@@ -408,7 +408,7 @@ function downloadPDF() {
       doc.setTextColor(110, 127, 168);
       doc.setFont('helvetica', 'normal');
       var today = new Date().toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' });
-      doc.text('HSD Informational Use Only   IS: 2166-1963   ' + today + '   Developed by: Kishore Kumar Maestri', ml, ph - 6);
+      doc.text('HSD Informational Use Only   IS: 2166-1963   ' + today + '   Developed by: Kishore Kumar Maestry', ml, ph - 6);
       newPage();
       rowY = 14;
       drawHdr(rowY);
@@ -448,7 +448,7 @@ function downloadPDF() {
   doc.setTextColor(110, 127, 168);
   doc.setFont('helvetica', 'normal');
   var today2 = new Date().toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' });
-  doc.text('HSD Informational Use Only   IS: 2166-1963   ' + today2 + '   Developed by: Kishore Kumar Maestri', ml, ph - 6);
+  doc.text('HSD Informational Use Only   IS: 2166-1963   ' + today2 + '   Developed by: Kishore Kumar Maistry', ml, ph - 6);
 
   doc.save(curTank + 'KL_Dip_Chart.pdf');
 }
