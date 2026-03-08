@@ -207,7 +207,7 @@ body.dark .tbtn.active .kl { color:#fff; text-shadow:0 0 10px var(--accent); }
 .lookup {
   background:var(--panel); border:1px solid var(--border);
   border-top:3px solid var(--accent2);
-  padding:28px 24px; margin-bottom:24px; text-align:center;
+  padding:28px 24px 32px; margin-bottom:24px; text-align:center;
   border-radius:0 0 6px 6px; box-shadow:var(--card-shadow);
 }
 .lookup-title {
@@ -232,13 +232,66 @@ body.dark .dip-in:focus { box-shadow:0 0 28px rgba(0,200,255,.4); border-color:#
 .dip-unit { font-family:'Share Tech Mono',monospace; font-size:16px; color:var(--dim); }
 
 /* ===== RESULT ===== */
-.result { min-height:90px; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:4px; }
-.r-idle { font-size:13px; color:var(--dim); font-family:'Share Tech Mono',monospace; letter-spacing:1px; }
-.r-dip { font-family:'Share Tech Mono',monospace; font-size:12px; color:var(--dim); margin-bottom:4px; }
-.r-vol { font-family:'Rajdhani',sans-serif; font-size:4rem; font-weight:700; color:var(--green); line-height:1; }
+.result {
+  display:flex; flex-direction:column;
+  align-items:center; justify-content:center;
+  gap:0; padding:8px 0 4px;
+}
+.r-idle {
+  font-size:13px; color:var(--dim);
+  font-family:'Share Tech Mono',monospace; letter-spacing:1px;
+  padding:24px 0;
+}
+/* DIP label row */
+.r-dip {
+  font-family:'Share Tech Mono',monospace; font-size:12px;
+  color:var(--dim); margin-bottom:8px; letter-spacing:.5px;
+}
+/* Main precise volume — large hero number */
+.r-vol {
+  font-family:'Rajdhani',sans-serif; font-size:5.4rem;
+  font-weight:700; color:var(--green); line-height:1;
+  letter-spacing:-1px;
+}
 body.dark .r-vol { text-shadow:0 0 30px rgba(6,214,160,.5); }
-.r-unit { font-family:'Share Tech Mono',monospace; font-size:14px; color:var(--green); letter-spacing:2px; }
-.r-meta { font-size:12px; color:var(--dim); margin-top:4px; font-family:'Share Tech Mono',monospace; }
+/* LITRES label directly under big number */
+.r-unit {
+  font-family:'Share Tech Mono',monospace; font-size:13px;
+  color:var(--green); letter-spacing:3px; margin-top:4px;
+  opacity:.85;
+}
+/* Rounded volume pill — sits below LITRES */
+.r-rounded-block {
+  margin-top:12px;
+  display:flex; flex-direction:column; align-items:center; gap:4px;
+}
+.r-rounded-lbl {
+  font-family:'Share Tech Mono',monospace; font-size:9px;
+  letter-spacing:2px; color:var(--dim); text-transform:uppercase;
+  opacity:.7;
+}
+.r-rounded {
+  font-family:'Rajdhani',sans-serif; font-size:1.65rem;
+  font-weight:700; color:var(--accent); line-height:1;
+  padding:5px 18px 5px;
+  border:1.5px solid var(--border);
+  border-radius:30px;
+  background:var(--panel2);
+  white-space:nowrap;
+  letter-spacing:.5px;
+}
+body.dark .r-rounded { color:var(--badge-color); }
+/* Divider between rounded and meta */
+.r-divider {
+  width:40px; height:1px;
+  background:var(--border); margin:12px auto 8px;
+}
+.r-meta {
+  font-size:11px; color:var(--dim);
+  font-family:'Share Tech Mono',monospace;
+  letter-spacing:.3px; line-height:1.6;
+}
+.r-err { font-size:13px; color:var(--accent2); font-family:'Share Tech Mono',monospace; padding:20px 0; }
 .r-err { font-size:13px; color:var(--accent2); font-family:'Share Tech Mono',monospace; }
 @keyframes popIn { from{transform:scale(.88);opacity:.4;} to{transform:scale(1);opacity:1;} }
 .r-vol { animation:popIn .2s ease; }
@@ -353,10 +406,13 @@ body.dark .r-interp { background:rgba(0,200,255,.07); }
   .tank-grid{grid-template-columns:repeat(5,1fr);}
   .info-bar{grid-template-columns:repeat(2,1fr);}
   .hdr h1{font-size:1.6rem;}
-  .r-vol{font-size:2.8rem;}
+  .r-vol{font-size:3.6rem;}
+  .r-rounded{font-size:1.4rem; padding:4px 14px;}
   .dip-in{font-size:1.5rem;width:120px;}
   .btn{padding:10px 18px;font-size:13px;}
-  .theme-bar{flex-direction:column;align-items:flex-start;}
+  .theme-bar{flex-direction:column;align-items:flex-start;gap:8px;}
+  .lookup{padding:20px 16px;}
+  .r-meta{font-size:10px;}
 }
 </style>
 </head>
@@ -671,11 +727,17 @@ function lookupDip() {
   var diff   = idxLow > 1 ? (arr[idxLow] - arr[idxLow-1]).toFixed(2) : 'N/A';
   curDip = idxLow;
 
+  var roundedVol = Math.round(vol);
   res.innerHTML =
-    '<div class="r-dip">DIP: ' + dip + ' cm</div>' +
+    '<div class="r-dip">DIP &nbsp;' + dip + ' cm</div>' +
     '<div class="r-vol">' + fmt(vol) + '</div>' +
     '<div class="r-unit">LITRES</div>' +
-    '<div class="r-meta">' + (vol/1000).toFixed(3) + ' KL &nbsp;&middot;&nbsp; ' + pct + '% capacity &nbsp;&middot;&nbsp; &#916;' + diff + ' L/cm</div>' +
+    '<div class="r-rounded-block">' +
+      '<div class="r-rounded-lbl">&#8776;&nbsp; rounded</div>' +
+      '<div class="r-rounded">' + roundedVol.toLocaleString() + ' L</div>' +
+    '</div>' +
+    '<div class="r-divider"></div>' +
+    '<div class="r-meta">' + (vol/1000).toFixed(3) + ' KL &nbsp;&middot;&nbsp; ' + pct + '% full &nbsp;&middot;&nbsp; &#916;' + diff + ' L/cm</div>' +
     interpNote;
 
   fw.style.display = 'block';
